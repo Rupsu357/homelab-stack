@@ -1,0 +1,37 @@
+networks:
+  homepage:
+    name: homepage
+    driver: bridge
+  traefik-public:
+    external: true
+
+volumes:
+  homepage-config:
+    name: homepage-config
+
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:v0.9.10
+    container_name: homepage
+    restart: unless-stopped
+    mem_limit: 256m
+    cpus: 0.3
+    environment:
+      - HOMEPAGE_VAR_DOMAIN=${DOMAIN}
+    volumes:
+      - homepage-config:/app/config
+      # Read-only Docker socket — homepage uses this to show container status
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homepage.rule=Host(`home.${DOMAIN}`)"
+      - "traefik.http.services.homepage.loadbalancer.server.port=3000"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3000"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    networks:
+      - homepage
+      - traefik-public

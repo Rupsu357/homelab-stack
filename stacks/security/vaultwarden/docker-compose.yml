@@ -1,0 +1,53 @@
+networks:
+  vaultwarden:
+    name: vaultwarden
+    driver: bridge
+  traefik-public:
+    external: true
+
+volumes:
+  vaultwarden-data:
+    name: vaultwarden-data
+
+services:
+  vaultwarden:
+    image: vaultwarden/server:1.32.1
+    container_name: vaultwarden
+    restart: unless-stopped
+    mem_limit: 256m
+    cpus: 0.5
+    environment:
+      - DOMAIN=https://vault.${DOMAIN}
+      - SIGNUPS_ALLOWED=${SIGNUPS_ALLOWED:-false}
+      # Disable admin panel unless you explicitly need it — it's an attack surface
+      - ADMIN_TOKEN=${ADMIN_TOKEN}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_SECURITY=${SMTP_SECURITY:-starttls}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_FROM=${SMTP_FROM}
+    volumes:
+      - vaultwarden-data:/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vaultwarden.rule=Host(`vault.${DOMAIN}`)"
+      - "traefik.http.services.vaultwarden.loadbalancer.server.port=80"
+      # Rate limit login attempts — brute force protection
+      - "traefik.http.middlewares.vaultwarden-ratelimit.ratelimit.average=10"
+      - "traefik.http.middlewares.vaultwarden-ratelimit.ratelimit.burst=20"
+      - "traefik.http.routers.vaultwarden.middlewares=vaultwarden-ratelimit"
+      - "homepage.group=Security"
+      - "homepage.name=Vaultwarden"
+      - "homepage.icon=vaultwarden.png"
+      - "homepage.href=https://vault.${DOMAIN}"
+      - "homepage.description=Password manager"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/alive"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - vaultwarden
+      - traefik-public
